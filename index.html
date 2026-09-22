@@ -69,7 +69,6 @@ function generateQR() {
   const stat = encodeURIComponent(document.getElementById('input-status').value);
   const office = encodeURIComponent(document.getElementById('input-office').value.trim());
   
-  // لقطة المسار التلقائية للموقع أونلاين
   const currentURL = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
   const fullOnlineURL = `${currentURL}/verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
   
