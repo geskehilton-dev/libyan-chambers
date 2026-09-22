@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>منظومة توليد باركود الشهادات الرقمية</title>
+
+<!-- ✅ استدعاء مكتبة QR الحقيقية والمضمونة أونلاين لمنع أي مشكلة في التوليد -->
+<script src="https://cloudflare.com"></script>
+
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#f8fafc;font-family:sans-serif;color:#1a202c;padding:20px 10px;display:flex;justify-content:center;align-items:center;min-height:100vh}
@@ -14,8 +18,9 @@
   label{font-weight:700;font-size:13px;color:#475569}
   input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none;background:#f8fafc}
   .gen-btn{width:100%;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;background:#2b6cb0;color:white;margin-top:10px}
-  .print-qr-zone{margin-top:24px;text-align:center;background:#fff;padding:20px;border-radius:166px;border:1px solid #e2e8f0;border-radius:16px}
+  .print-qr-zone{margin-top:24px;text-align:center;background:#fff;padding:20px;border:1px solid #e2e8f0;border-radius:16px}
   #qrcode-box{display:flex;justify-content:center;margin:10px auto}
+  #qrcode-box img, #qrcode-box canvas { display: block; margin: 0 auto; }
 </style>
 </head>
 <body>
@@ -48,38 +53,39 @@
       <input id="input-office" value="المنطقة الغربية - مكتب رقدالين">
     </div>
     
-    <button class="gen-btn" onclick="generateOnlineQR()">تخليق وتوليد الباركود أونلاين 🌐</button>
+    <button class="gen-btn" onclick="generateQR()">تخليق وتوليد الباركود أونلاين 🌐</button>
     
     <div class="print-qr-zone" id="qr-zone" style="display:none">
-      <div style="font-size:13px;color:#64748b;margin-bottom:12px;font-weight:500">👇 تم توليد الكود المرتبط بموقعك بنجاح للطباعة:</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:12px;font-weight:500">👇 تم توليد الكود المربوط بموقعك بنجاح للطباعة:</div>
       <div id="qrcode-box"></div>
     </div>
   </div>
 </div>
 
 <script>
-// محرك داخلي مدمج وخفيف جداً لتوليد الكود بدون الحاجة لإنترنت في جهاز الموظف
-var OnlineQREngine=function(){function k(a){this.v=a;this.d=[]}function h(a){for(var c=a<<10;0<=e(c)-e(1335);)c^=1335<<(e(c)-e(1335));return a<<10|c^21522}function e(a){for(var c=0;0!=a;)c++,a>>>=1;return c}k.prototype={addData:function(a){for(var c=[],b=0;b<a.length;b++){var d=a.charCodeAt(b);128>d?c.push(d):2048>d?c.push(192|d>>6,128|63&d):c.push(224|d>>12,128|63&d>>6,128|63&d)}this.d=c},make:function(){var a=4*this.v+17,c=Array(a);this.m=c;for(var b=0;b<a;b++){c[b]=Array(a);for(var g=0;g<a;g++)c[b][g]=null}b=[,[a-7,0],[0,a-7]];for(g=0;g<b.length;g++)for(var d=b[g],l=b[g],f=-1;7>=f;f++)if(!(-1>d+f||a<=d+f))for(var p=-1;7>=p;p++)-1>l+p||a<=l+p||(0<=f&&6>=f&&(0==p||6==p)||0<=p&&6>=p&&(0==f||6==f)||2<=f&&4>=f&&2<=p&&4>=p?c[d+f][l+p]=!0:c[d+f][l+p]=!1);for(b=8;b<a-8;b++)null==c[b]&&(c[b]=0==b%2);b=h(1);for(g=0;15>g;g++)d=1==(b>>g&1),6>g?c[g]=d:8>g?c[g+1]=d:c[a-15+g]=d;for(g=0;15>g;g++)d=1==(b>>g&1),8>g?c[a-g-1]=d:9>g?c[15-g]=d:c[15-g-1]=d;c[a-8]=!0;b=[];b.push(64);b.push(this.d.length>>8&255,this.d.length&255);for(g=0;g<this.d.length;g++)b.push(this.d[g]);for(g=4*this.v+17;b.length<g;)b.push(236,17);d=0;l=a-1;f=7;for(p=a-1;0<p;p-=2)for(6==p&&p--;;){for(var e=0;2>e;e++)if(null==c[l][p-e]){var k=!1;d<b.length&&(k=1==(b[d]>>f&1));0==(l+p-e)%2&&(k=!k);c[l][p-e]=k;f--;-1==f&&(d++,f=7)}l+=-1;if(0>l||a<=l){l-=-1;break}}},createSvg:function(){var a=this.m.length,c=document.createElementNS("http://w3.org","svg");c.setAttribute("width","200");c.setAttribute("height","200");c.setAttribute("viewBox","0 0 "+2*a+" "+2*a);var b=document.createElementNS("http://w3.org","rect");b.setAttribute("width","100%");b.setAttribute("height","100%");b.setAttribute("fill","#ffffff");c.appendChild(b);for(b=0;b<a;b++)for(var g=0;g<a;g++)if(this.m[b][g]){var d=document.createElementNS("http://w3.org","rect");d.setAttribute("x",2*g);d.setAttribute("y",2*b);d.setAttribute("width","2");d.setAttribute("height","2");d.setAttribute("fill","#0f172a");c.appendChild(d)}return c}};return{create:function(a){return new k(a||14)}}}();
-
-function generateOnlineQR() {
+function generateQR() {
   const type = encodeURIComponent(document.getElementById('input-type').value);
   const num = encodeURIComponent(document.getElementById('input-number').value.trim());
   const stat = encodeURIComponent(document.getElementById('input-status').value);
   const office = encodeURIComponent(document.getElementById('input-office').value.trim());
   
-  // 🔗 توجيه الرابط إلى صفحة العرض الخاصة بك أونلاين بالمتغيرات المتوافقة مع خوارزميتك تماماً
-  // استبدل "://yourdomain.com" برابط صفحة العرض الحقيقي الخاص بك عند رفعه على السيرفر
-  const targetWebsite = "https://://yourdomain.com"; 
-  const fullOnlineURL = `${targetWebsite}?type=${type}&num=${num}&stat=${stat}&office=${office}`;
+  // لقطة المسار التلقائية للموقع أونلاين
+  const currentURL = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+  const fullOnlineURL = `${currentURL}/verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
   
   const box = document.getElementById("qrcode-box");
   box.innerHTML = "";
   
-  var qr = OnlineQREngine.create(15);
-  qr.addData(fullOnlineURL);
-  qr.make();
+  // ✅ توليد الكود الفعلي باستخدام محرك الكود الرسمي المضمون والآمن لموقعك
+  new QRCode(box, {
+    text: fullOnlineURL,
+    width: 200,
+    height: 200,
+    colorDark : "#0f172a",
+    colorLight : "#ffffff",
+    correctLevel : QRCode.CorrectLevel.H
+  });
   
-  box.appendChild(qr.createSvg());
   document.getElementById('qr-zone').style.display = 'block';
 }
 </script>
