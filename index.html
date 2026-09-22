@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - توليد شهادات QR</title>
-    <!-- استدعاء مكتبة توليد الـ QR Code المضمونة -->
-    <script src="https://cloudflare.com"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #0d1117; color: #c9d1d9; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -24,7 +22,7 @@
         .btn-secondary { background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 14px; padding: 8px; width: 100%; margin-bottom: 20px; }
         .btn-secondary:hover { background-color: #30363d; }
         
-        /* تصميم الحاوية المطابق تماماً للصورة التي أرسلتها */
+        /* تصميم الحاوية المطابق تماماً للصورة الكلاسيكية */
         .qr-classic-container {
             background-color: #ffffff;
             border: 2px solid #7a828e;
@@ -34,11 +32,11 @@
             display: inline-block;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .qr-output {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #ffffff;
+        .qr-output-img {
+            display: block;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
         }
         .qr-label-text {
             color: #000000;
@@ -106,16 +104,16 @@
             
             <!-- البطاقة الكلاسيكية المطلوبة المتطابقة مع صورتك -->
             <div class="qr-classic-container">
-                <div id="qrcode" class="qr-output"></div>
+                <img id="qr-img" class="qr-output-img" src="" alt="QR Code">
                 <div class="qr-label-text">QR Code</div>
             </div>
             
-            <p style="font-size: 12px; color: #8b949e; margin-top: 5px;">يمكنك تصوير البطاقة البيضاء وحفظها مباشرة لطباعتها للزبون</p>
+            <p style="font-size: 12px; color: #8b949e; margin-top: 5px;">يمكنك حفظ الصورة البيضاء مباشرة أو تصوير الشاشة لطباعتها للزبون</p>
         </div>
     </div>
 
     <script>
-        // الرمز السري المخصص لك هو 1234
+        // الرمز السري المخصص لك هو 0203 جاهز ومعدل
         const ADMIN_PASSWORD = "0203"; 
 
         function checkPassword() {
@@ -154,18 +152,11 @@
             document.getElementById("url-text").innerText = finalCustomerUrl;
             document.getElementById("result-box").style.display = "block";
 
-            // تفريغ المربع ورسم الكود بالمظهر النظيف الكلاسيكي المطلوب
-            document.getElementById("qrcode").innerHTML = "";
-            setTimeout(() => {
-                new QRCode(document.getElementById("qrcode"), {
-                    text: finalCustomerUrl,
-                    width: 220,
-                    height: 220,
-                    colorDark : "#1a1f26", // درجة الأسود الداكنة العميقة
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
-            }, 50);
+            // استدعاء السيرفر الجديد والفعال لرسم صورة الـ QR الفورية بالكامل
+            const alternativeQrUrl = `https://qrserver.com{encodeURIComponent(finalCustomerUrl)}&ecc=H&margin=0`;
+            
+            // تعيين مسار الصورة فوراً
+            document.getElementById("qr-img").src = alternativeQrUrl;
         }
 
         function copyURL() {
