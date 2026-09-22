@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="notranslate">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - توليد شهادات QR</title>
     <style>
@@ -22,7 +23,6 @@
         .btn-secondary { background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 14px; padding: 8px; width: 100%; margin-bottom: 20px; }
         .btn-secondary:hover { background-color: #30363d; }
         
-        /* تصميم الحاوية المطابق تماماً للصورة الكلاسيكية */
         .qr-classic-container {
             background-color: #ffffff;
             border: 2px solid #7a828e;
@@ -41,6 +41,11 @@
             height: 220px;
             margin: 0 auto;
         }
+        .qr-output img {
+            display: block;
+            width: 220px;
+            height: 220px;
+        }
         .qr-label-text {
             color: #000000;
             font-family: Arial, sans-serif;
@@ -57,17 +62,15 @@
 </head>
 <body>
 
-    <!-- قسم حماية لوحة التحكم بكلمة مرور -->
     <div class="admin-card" id="login-section">
         <h1>تسجيل الدخول للنظام</h1>
         <div class="form-group">
             <label for="pass-input">أدخل كلمة مرور النظام:</label>
-            <input type="password" id="pass-input" placeholder="••••••••">
+            <input type="password" id="pass-input" placeholder="••••••••" onkeypress="handleKeyPress(event)">
         </div>
         <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
     </div>
 
-    <!-- لوحة التحكم الحقيقية بعد إدخال الرمز الصحيح -->
     <div class="admin-card" id="panel-section">
         <h1>منظومة إصدار شهادات منشأ QR</h1>
         
@@ -97,7 +100,6 @@
 
         <button class="btn btn-primary" onclick="generateSystemQR()">توليد الرابط والـ QR Code</button>
 
-        <!-- صندوق ظهور النتائج بعد الضغط على الزر -->
         <div class="result-box" id="result-box">
             <h3 style="color: #ffffff; font-size: 16px; margin-bottom: 10px;">الرابط الخاص بالزبون:</h3>
             <div class="url-box" id="url-text"></div>
@@ -105,7 +107,6 @@
             
             <h3 style="color: #ffffff; font-size: 16px;">البطاقة الجاهزة للطباعة:</h3>
             
-            <!-- البطاقة الكلاسيكية المطلوبة المتطابقة مع صورتك -->
             <div class="qr-classic-container">
                 <div id="qrcode-canvas" class="qr-output"></div>
                 <div class="qr-label-text">QR Code</div>
@@ -115,9 +116,7 @@
         </div>
     </div>
 
-    <!-- خوارزمية التوليد الذاتية المدمجة بالكامل لتعمل بدون إنترنت وبشكل مستقل -->
     <script>
-        // الرمز السري المخصص 0203
         const ADMIN_PASSWORD = "0203"; 
 
         function checkPassword() {
@@ -130,75 +129,46 @@
             }
         }
 
-        // محرك توليد الـ QR المستقل مدمج بالكامل هنا
-        const QRCodeGenerator = {
-            createCanvas: function(text, size) {
-                const canvas = document.createElement('canvas');
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext('2d');
-                
-                // خوارزمية سريعة ومضمونة ومستقلة لتوليد الـ QR بقيمة بكسل ثابتة
-                const qrUrl = `https://qrserver.com{size}x${size}&data=${encodeURIComponent(text)}&ecc=H&margin=0`;
-                
-                const img = new Image();
-                img.crossOrigin = "anonymous";
-                img.src = qrUrl;
-                img.onload = function() {
-                    ctx.drawImage(img, 0, 0, size, size);
-                };
-                
-                // حل احتياطي فوري إذا تم حظر السيرفر الخارجي يعتمد على صورة برمجية مدمجة
-                img.onerror = function() {
-                    document.getElementById("qrcode-canvas").innerHTML = "";
-                    const backupImg = document.createElement('img');
-                    // استخدام محرك تظليل احتياطي ذكي جداً ومفتوح المصدر ومستقر لا يتأثر بالحظر
-                    backupImg.src = `https://quickchart.io{encodeURIComponent(text)}&size=${size}&margin=0`;
-                    backupImg.style.width = "220px";
-                    backupImg.style.height = "220px";
-                    document.getElementById("qrcode-canvas").appendChild(backupImg);
-                };
-                
-                return canvas;
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                checkPassword();
             }
-        };
+        }
 
         function generateSystemQR() {
-            const type = encodeURIComponent(document.getElementById("cert-type").value.trim());
-            const num = encodeURIComponent(document.getElementById("cert-num").value.trim());
-            const stat = encodeURIComponent(document.getElementById("cert-stat").value.trim());
-            const office = encodeURIComponent(document.getElementById("cert-office").value.trim());
+            const certType = document.getElementById("cert-type").value.trim();
+            const certNum = document.getElementById("cert-num").value.trim();
+            const certStat = document.getElementById("cert-stat").value;
+            const certOffice = document.getElementById("cert-office").value.trim();
 
-            if (!document.getElementById("cert-num").value.trim()) {
+            if (!certNum) {
                 alert("الرجاء إدخال رقم الشهادة أولاً!");
                 return;
             }
 
-            let currentUrl = window.location.href;
-            if (currentUrl.includes("index.html")) {
-                currentUrl = currentUrl.substring(0, currentUrl.indexOf("index.html"));
-            }
-            if (!currentUrl.endsWith("/")) {
-                currentUrl += "/";
-            }
-            
-            const finalCustomerUrl = `${currentUrl}verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
+            const baseUrl = window.location.origin + window.location.pathname.replace("index.html", "");
+            const generatedUrl = `${baseUrl}verify.html?type=${encodeURIComponent(certType)}&num=${encodeURIComponent(certNum)}&status=${encodeURIComponent(certStat)}&office=${encodeURIComponent(certOffice)}`;
 
-            document.getElementById("url-text").innerText = finalCustomerUrl;
+            document.getElementById("url-text").innerText = generatedUrl;
             document.getElementById("result-box").style.display = "block";
 
-            // توليد وعرض الكود فورياً بآلية الحماية والبدائل التلقائية
-            const container = document.getElementById("qrcode-canvas");
-            container.innerHTML = "";
+            const canvasDiv = document.getElementById("qrcode-canvas");
+            canvasDiv.innerHTML = "";
             
-            const canvasElement = QRCodeGenerator.createCanvas(finalCustomerUrl, 220);
-            container.appendChild(canvasElement);
+            const qrImage = document.createElement("img");
+            qrImage.src = `https://qrserver.com{encodeURIComponent(generatedUrl)}`;
+            qrImage.alt = "QR Code";
+            
+            canvasDiv.appendChild(qrImage);
         }
 
         function copyURL() {
             const urlText = document.getElementById("url-text").innerText;
-            navigator.clipboard.writeText(urlText);
-            alert("تم نسخ رابط التحقق بنجاح!");
+            navigator.clipboard.writeText(urlText).then(() => {
+                alert("تم نسخ رابط الشهادة بنجاح!");
+            }).catch(err => {
+                alert("فشل النسخ التلقائي، يمكنك نسخ الرابط يدوياً.");
+            });
         }
     </script>
 </body>
