@@ -1,92 +1,138 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>منظومة توليد باركود الشهادات الرقمية</title>
-
-<!-- ✅ استدعاء مكتبة QR الحقيقية والمضمونة أونلاين لمنع أي مشكلة في التوليد -->
-<script src="https://cloudflare.com"></script>
-
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;background:#f8fafc;font-family:sans-serif;color:#1a202c;padding:20px 10px;display:flex;justify-content:center;align-items:center;min-height:100vh}
-  .wrap{width:100%;max-width:440px;margin:0 auto}
-  .control-panel{background:#fff;border-radius:24px;padding:25px 20px;box-shadow:0 10px 30px rgba(0,0,0,0.04);border:1px solid #edf2f7}
-  .control-panel h3{margin:0 0 18px;color:#0f172a;font-size:18px;text-align:center;font-weight:800}
-  .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-  label{font-weight:700;font-size:13px;color:#475569}
-  input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;outline:none;background:#f8fafc}
-  .gen-btn{width:100%;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;background:#2b6cb0;color:white;margin-top:10px}
-  .print-qr-zone{margin-top:24px;text-align:center;background:#fff;padding:20px;border:1px solid #e2e8f0;border-radius:16px}
-  #qrcode-box{display:flex;justify-content:center;margin:10px auto}
-  #qrcode-box img, #qrcode-box canvas { display: block; margin: 0 auto; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - توليد شهادات QR</title>
+    <!-- استدعاء مكتبة توليد الـ QR Code لتعمل مباشرة داخل المتصفح -->
+    <script src="https://cloudflare.com"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0d1117; color: #c9d1d9; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .admin-card { width: 100%; max-width: 500px; background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-size: 24px; color: #58a6ff; text-align: center; margin-bottom: 25px; font-weight: 700; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 14px; margin-bottom: 8px; color: #8b949e; font-weight: 600; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background-color: #21262d; color: #f0f6fc; font-size: 15px; outline: none; transition: 0.2s; }
+        input:focus, select:focus { border-color: #58a6ff; box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background-color: #238636; color: #ffffff; margin-top: 10px; }
+        .btn-primary:hover { background-color: #2ea44f; }
+        .result-box { display: none; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 20px; text-align: center; }
+        .qr-output { display: flex; justify-content: center; margin: 20px 0; background: #fff; padding: 15px; border-radius: 12px; width: fit-content; margin-left: auto; margin-right: auto; }
+        .url-box { background: #21262d; border: 1px solid #30363d; padding: 12px; border-radius: 8px; font-size: 13px; color: #58a6ff; word-break: break-all; margin-bottom: 15px; text-align: left; direction: ltr; }
+        .btn-secondary { background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 14px; padding: 8px; }
+        .btn-secondary:hover { background-color: #30363d; }
+        #login-section { display: block; }
+        #panel-section { display: none; }
+    </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="control-panel">
-    <h3>منظومة تخليق باركود الشهادات</h3>
-    
-    <div class="field">
-      <label>نوع الشهادة:</label>
-      <input id="input-type" value="شهادة منشأ التبادل الحر">
+    <!-- قسم حماية لوحة التحكم بكلمة مرور -->
+    <div class="admin-card" id="login-section">
+        <h1>تسجيل الدخول للنظام</h1>
+        <div class="form-group">
+            <label for="pass-input">أدخل كلمة مرور النظام:</label>
+            <input type="password" id="pass-input" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
     </div>
-    
-    <div class="field">
-      <label>رقم الشهادة:</label>
-      <input id="input-number" value="MA014-M05-2131">
-    </div>
-    
-    <div class="field">
-      <label>حالة الطلب:</label>
-      <select id="input-status">
-        <option value="مدفوع">مدفوع</option>
-        <option value="قيد الانتظار">قيد الانتظار</option>
-        <option value="مرفوض">مرفوض</option>
-      </select>
-    </div>
-    
-    <div class="field">
-      <label>المكتب المصدر:</label>
-      <input id="input-office" value="المنطقة الغربية - مكتب رقدالين">
-    </div>
-    
-    <button class="gen-btn" onclick="generateQR()">تخليق وتوليد الباركود أونلاين 🌐</button>
-    
-    <div class="print-qr-zone" id="qr-zone" style="display:none">
-      <div style="font-size:13px;color:#64748b;margin-bottom:12px;font-weight:500">👇 تم توليد الكود المربوط بموقعك بنجاح للطباعة:</div>
-      <div id="qrcode-box"></div>
-    </div>
-  </div>
-</div>
 
-<script>
-function generateQR() {
-  const type = encodeURIComponent(document.getElementById('input-type').value);
-  const num = encodeURIComponent(document.getElementById('input-number').value.trim());
-  const stat = encodeURIComponent(document.getElementById('input-status').value);
-  const office = encodeURIComponent(document.getElementById('input-office').value.trim());
-  
-  const currentURL = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-  const fullOnlineURL = `${currentURL}/verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
-  
-  const box = document.getElementById("qrcode-box");
-  box.innerHTML = "";
-  
-  // ✅ توليد الكود الفعلي باستخدام محرك الكود الرسمي المضمون والآمن لموقعك
-  new QRCode(box, {
-    text: fullOnlineURL,
-    width: 200,
-    height: 200,
-    colorDark : "#0f172a",
-    colorLight : "#ffffff",
-    correctLevel : QRCode.CorrectLevel.H
-  });
-  
-  document.getElementById('qr-zone').style.display = 'block';
-}
-</script>
+    <!-- لوحة التحكم الحقيقية بعد إدخال الرمز الصحيح -->
+    <div class="admin-card" id="panel-section">
+        <h1>منظومة إصدار شهادات منشأ QR</h1>
+        
+        <div class="form-group">
+            <label>نوع الشهادة:</label>
+            <input type="text" id="cert-type" value="شهادة منشأ التبادل الحر">
+        </div>
+
+        <div class="form-group">
+            <label>رقم الشهادة:</label>
+            <input type="text" id="cert-num" placeholder="مثال: MA014-M05-3361">
+        </div>
+
+        <div class="form-group">
+            <label>حالة الطلب:</label>
+            <select id="cert-stat">
+                <option value="مدفوع">مدفوع (أخضر ✓)</option>
+                <option value="قيد الانتظار">قيد الانتظار (أصفر ⏳)</option>
+                <option value="مرفوض">مرفوض (أحمر ✕)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>المكتب المصدر للشهادة:</label>
+            <input type="text" id="cert-office" value="المنطقة الغربية - مكتب رقدالين">
+        </div>
+
+        <button class="btn btn-primary" onclick="generateSystemQR()">توليد الرابط والـ QR Code</button>
+
+        <!-- صندوق ظهور النتائج بعد الضغط على الزر -->
+        <div class="result-box" id="result-box">
+            <h3 style="color: #ffffff; font-size: 16px;">الرابط الخاص بالزبون:</h3>
+            <div class="url-box" id="url-text"></div>
+            <button class="btn btn-secondary" onclick="copyURL()">نسخ الرابط</button>
+            
+            <h3 style="color: #ffffff; font-size: 16px; margin-top: 20px;">رمز الـ QR Code للطباعة:</h3>
+            <div id="qrcode" class="qr-output"></div>
+            <p style="font-size: 12px; color: #8b949e;">يمكنك حفظ الصورة أو تصوير الشاشة وطباعتها للزبون</p>
+        </div>
+    </div>
+
+    <script>
+        // تغيير كلمة المرور هنا للحماية (الرمز الحالي هو 1234)
+        const ADMIN_PASSWORD = "1234"; 
+
+        function checkPassword() {
+            const enteredPass = document.getElementById("pass-input").value;
+            if (enteredPass === ADMIN_PASSWORD) {
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("panel-section").style.display = "block";
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        let qrcodeInstance = null;
+
+        function generateSystemQR() {
+            const type = encodeURIComponent(document.getElementById("cert-type").value.trim());
+            const num = encodeURIComponent(document.getElementById("cert-num").value.trim());
+            const stat = encodeURIComponent(document.getElementById("cert-stat").value.trim());
+            const office = encodeURIComponent(document.getElementById("cert-office").value.trim());
+
+            if (!document.getElementById("cert-num").value.trim()) {
+                alert("الرجاء إدخال رقم الشهادة أولاً!");
+                return;
+            }
+
+            // الخوارزمية التي تقوم ببناء الرابط الذكي المتوافق مع جيت هاب وصفحة verify.html الخاصة بك
+            const currentRepoUrl = window.location.href.split('index.html')[0];
+            const finalCustomerUrl = `${currentRepoUrl}verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
+
+            // إظهار صندوق النتائج
+            document.getElementById("url-text").innerText = finalCustomerUrl;
+            document.getElementById("result-box").style.display = "block";
+
+            // مسح الكود السابق وتوليد كود جديد
+            document.getElementById("qrcode").innerHTML = "";
+            qrcodeInstance = new QRCode(document.getElementById("qrcode"), {
+                text: finalCustomerUrl,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        function copyURL() {
+            const urlText = document.getElementById("url-text").innerText;
+            navigator.clipboard.writeText(urlText);
+            alert("تم نسخ رابط التحقق بنجاح!");
+        }
+    </script>
 </body>
 </html>
