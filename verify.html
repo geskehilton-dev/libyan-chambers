@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حالة الشهادة - بوابة التحقق الرقمية</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f8fafc;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;color:#1a202c;padding:20px 10px;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .cert-card{width:100%;max-width:440px;background:#ffffff;border-radius:32px;padding:35px 24px;box-shadow:0 10px 40px rgba(0,0,0,0.03);position:relative;border:1px solid #f0f4f8;text-align:center}
+  
+  /* قائمة اختيار اللغات العلوية */
+  .lang-wrapper{position:absolute;top:24px;left:24px;z-index:100}
+  .lang-selector{border:1.5px solid #cbd5e1;border-radius:12px;padding:8px 14px;font-size:14px;font-weight:600;color:#2b6cb0;background:#fff;display:inline-flex;align-items:center;gap:6px;cursor:pointer;outline:none;-webkit-appearance:none;-moz-appearance:none;appearance:none}
+  .lang-wrapper::after{content:'\25BC';font-size:10px;color:#4a5568;position:absolute;top:50%;transform:translateY(-50%);left:12px;pointer-events:none}
+  html[dir="ltr"] .lang-wrapper{left:auto;right:24px}
+  html[dir="ltr"] .lang-wrapper::after{left:auto;right:12px}
+  html[dir="ltr"] .lang-selector{padding:8px 24px 8px 14px}
+  html[dir="rtl"] .lang-selector{padding:8px 14px 8px 24px}
+
+  /* حاوية الشعار الحقيقي الصافي */
+  .logo-container{margin:45px auto 25px;width:110px;height:110px;display:flex;align-items:center;justify-content:center}
+  .logo-img{width:100%;height:100%;object-fit:contain}
+  
+  /* تنسيقات الخطوط والمسافات البصرية المتطابقة مع لقطة شاشتك */
+  .cert-type{font-size:16px;color:#64748b;margin:0 0 18px;font-weight:400;letter-spacing:-0.2px}
+  .label-num{font-size:18px;font-weight:700;color:#1e293b;margin:0 0 4px}
+  .val-num{font-size:17px;color:#334155;font-weight:500;letter-spacing:0.5px;margin-bottom:28px}
+  
+  h1.main-title{font-size:32px;font-weight:800;color:#0f172a;margin:0 0 6px;letter-spacing:-0.5px}
+  .sub-title{font-size:16px;color:#94a3b8;margin:0 0 32px;font-weight:400}
+  
+  /* بطاقة حالة الطلب الخضراء الفاتحة */
+  .status-box{border-radius:24px;padding:26px 20px;margin-bottom:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background-color:#edfbf4;border:1px solid #bbf7d0}
+  .status-box .box-title{font-size:15px;font-weight:600;color:#16a34a;letter-spacing:0.2px}
+  .status-box .status-text-wrapper{display:flex;align-items:center;gap:12px}
+  .status-box .status-title{font-size:42px;font-weight:800;color:#15803d;margin:0;line-height:1}
+  .icon-check{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;background-color:#16a34a;box-shadow:0 2px 8px rgba(22,163,74,0.15)}
+  
+  /* ثيمات الحالات التفاعلية */
+  .theme-قيد{background-color:#fffbeb;border:1px solid #fde68a}
+  .theme-قيد .box-title{color:#d97706}
+  .theme-قيد .status-title{color:#b45309}
+  .theme-قيد .icon-check{background-color:#d97706}
+  
+  .theme-مرفوض{background-color:#fef2f2;border:1px solid #fca5a5}
+  .theme-مرفوض .box-title{color:#dc2626}
+  .theme-مرفوض .status-title{color:#b91c1c}
+  .theme-مرفوض .icon-check{background-color:#dc2626}
+
+  /* تذييل الورقة والمكتب المعني */
+  .footer-instruction{font-size:14px;color:#94a3b8;line-height:1.6;font-weight:500;max-width:340px;margin:0 auto;border-top:1px solid #f1f5f9;padding-top:24px}
+  .office-highlight{color:#64748b;font-weight:600;display:block;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="cert-card">
+  <!-- قائمة اللغات المتعددة -->
+  <div class="lang-wrapper">
+    <select class="lang-selector" id="lang-select" onchange="changeLanguage(this.value)">
+      <option value="ar">AR العربية</option>
+      <option value="en">EN English</option>
+      <option value="fr">FR Français</option>
+    </select>
+  </div>
+
+  <!-- الشعار الحقيقي الصافي والمضمون مائة بالمائة المستدعى من الرابط مباشرة لمنع أي تشويه -->
+  <div class="logo-container">
+    <img class="logo-img" src="https://ibb.co" alt="Chamber Logo" onerror="this.src='https://svgrepo.com'">
+  </div>
+
+  <!-- نصوص الواجهة والبيانات المتغيرة -->
+  <div class="cert-type" id="cert-type">(شهادة منشأ التبادل الحر)</div>
+  <div class="label-num" id="lbl-num">رقم الشهادة :</div>
+  <div class="val-num" id="cert-num">MA014-M05-3361</div>
+
+  <h1 class="main-title" id="lbl-title">حالة الشهادة</h1>
+  <div class="sub-title" id="lbl-subtitle">التحقق من حالة الطلب</div>
+
+  <div id="status-card" class="status-box">
+    <div class="box-title" id="lbl-boxtitle">حالة الطلب</div>
+    <div class="status-text-wrapper">
+      <div class="icon-check" id="status-icon">✓</div>
+      <div class="status-title" id="status-text">مدفوع</div>
+    </div>
+  </div>
+
+  <div class="footer-instruction" id="lbl-footer">
+    برجاء مراجعة المكتب الذي صدرت منه الشهادة
+    <span class="office-highlight" id="cert-office">(المنطقة الغربية - مكتب رقدالين)</span>
+  </div>
+</div>
+
+<script>
+const translations = {
+  ar: {
+    dir: "rtl",
+    numLabel: "رقم الشهادة :",
+    title: "حالة الشهادة",
+    subtitle: "التحقق من حالة الطلب",
+    boxTitle: "حالة الطلب",
+    footer: "برجاء مراجعة المكتب الذي صدرت منه الشهادة",
+    statuses: { "مدفوع": "مدفوع", "مرفوض": "مرفوض", "قيد الانتظار": "قيد الانتظار" }
+  },
+  en: {
+    dir: "ltr",
+    numLabel: "Certificate Number:",
+    title: "Certificate Status",
+    subtitle: "Verification of order status",
+    boxTitle: "Order Status",
+    footer: "Please review the office that issued the certificate",
+    statuses: { "مدفوع": "Paid", "مرفوض": "Rejected", "قيد الانتظار": "Pending" }
+  },
+  fr: {
+    dir: "ltr",
+    numLabel: "Numéro de Certificat:",
+    title: "Statut du Certificat",
+    subtitle: "Vérification du statut de la demande",
+    boxTitle: "Statut de la Demande",
+    footer: "Veuillez consulter le bureau qui a délivré le certificat",
+    statuses: { "مدفوع": "Payé", "مرفوض": "Refusé", "قيد الانتظار": "En Attente" }
+  }
+};
+
+let currentRawStatus = "مدفوع";
+
+function changeLanguage(lang) {
+  const data = translations[lang];
+  document.documentElement.setAttribute("dir", data.dir);
+  document.documentElement.setAttribute("lang", lang);
+  
+  document.getElementById("lbl-num").innerText = data.numLabel;
+  document.getElementById("lbl-title").innerText = data.title;
+  document.getElementById("lbl-subtitle").innerText = data.subtitle;
+  document.getElementById("lbl-boxtitle").innerText = data.boxTitle;
+  
+  const officeText = document.getElementById("cert-office").outerHTML;
+  document.getElementById("lbl-footer").innerHTML = data.footer + officeText;
+  
+  document.getElementById("status-text").innerText = data.statuses[currentRawStatus] || currentRawStatus;
+}
+
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  
+  const type = params.get('type') ? decodeURIComponent(params.get('type')) : "شهادة منشأ التبادل الحر";
+  const num = params.get('num') ? decodeURIComponent(params.get('num')) : "MA014-M05-3361";
+  currentRawStatus = params.get('stat') ? decodeURIComponent(params.get('stat')) : "مدفوع";
+  const office = params.get('office') ? decodeURIComponent(params.get('office')) : "المنطقة الغربية - مكتب رقدالين";
+
+  document.getElementById('cert-type').innerText = `(${type})`;
+  document.getElementById('cert-num').innerText = num;
+  document.getElementById('cert-office').innerText = `(${office})`;
+  
+  const statusCard = document.getElementById('status-card');
+  const statusIcon = document.getElementById('status-icon');
+  
+  if (currentRawStatus.includes("مدفوع")) {
+    statusCard.className = "status-box theme-مدفوع";
+    statusIcon.innerText = "✓";
+  } else if (currentRawStatus.includes("مرفوض")) {
+    statusCard.className = "status-box theme-مرفوض";
+    statusIcon.innerText = "✕";
+  } else {
+    statusCard.className = "status-box theme-قيد";
+    statusIcon.innerText = "⏳";
+    currentRawStatus = "قيد الانتظار";
+  }
+
+  changeLanguage("ar");
+};
+</script>
+</body>
+</html>
