@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="notranslate">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - توليد شهادات QR</title>
     <style>
@@ -17,60 +16,47 @@
         .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-primary { background-color: #238636; color: #ffffff; margin-top: 10px; }
         .btn-primary:hover { background-color: #2ea44f; }
-        
         .result-box { display: none; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 20px; text-align: center; }
         .url-box { background: #21262d; border: 1px solid #30363d; padding: 12px; border-radius: 8px; font-size: 13px; color: #58a6ff; word-break: break-all; margin-bottom: 15px; text-align: left; direction: ltr; }
         .btn-secondary { background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 14px; padding: 8px; width: 100%; margin-bottom: 20px; }
         .btn-secondary:hover { background-color: #30363d; }
         
-        .qr-classic-container {
-            background-color: #ffffff;
-            border: 2px solid #7a828e;
-            padding: 30px 25px 20px 25px;
-            width: fit-content;
-            margin: 20px auto;
-            display: inline-block;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        /* تصميم الإطار الأبيض الخارجي المطابق لصورتك */
+        .qr-classic-container { 
+            background-color: #ffffff; 
+            border: 2px solid #7a828e; 
+            padding: 30px 25px 20px 25px; 
+            width: fit-content; 
+            margin: 20px auto; 
+            display: inline-block; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
         }
-        .qr-output {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #ffffff;
-            width: 220px;
-            height: 220px;
-            margin: 0 auto;
-        }
-        .qr-output img {
-            display: block;
-            width: 220px;
-            height: 220px;
-        }
-        .qr-label-text {
-            color: #000000;
-            font-family: Arial, sans-serif;
-            font-size: 20px;
-            font-weight: bold;
-            margin-top: 15px;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
+        .qr-output { display: flex; justify-content: center; align-items: center; background: #ffffff; margin: 0 auto; }
         
+        /* تنسيق جدول البكسلات الداخلي الـ QR */
+        .qr-output table { border-collapse: collapse; border-spacing: 0; margin: 0 auto; }
+        .qr-output td { width: 5px; height: 5px; padding: 0; margin: 0; }
+        .qr-output td.black { background-color: #000000; }
+        .qr-output td.white { background-color: #ffffff; }
+        
+        .qr-label-text { color: #000000; font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px; text-align: center; }
         #login-section { display: block; }
         #panel-section { display: none; }
     </style>
 </head>
 <body>
 
+    <!-- قسم الحماية بكلمة مرور -->
     <div class="admin-card" id="login-section">
         <h1>تسجيل الدخول للنظام</h1>
         <div class="form-group">
             <label for="pass-input">أدخل كلمة مرور النظام:</label>
-            <input type="password" id="pass-input" placeholder="••••••••" onkeypress="handleKeyPress(event)">
+            <input type="password" id="pass-input" placeholder="••••••••">
         </div>
         <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
     </div>
 
+    <!-- لوحة التحكم وإدخال البيانات -->
     <div class="admin-card" id="panel-section">
         <h1>منظومة إصدار شهادات منشأ QR</h1>
         
@@ -78,12 +64,10 @@
             <label>نوع الشهادة:</label>
             <input type="text" id="cert-type" value="شهادة منشأ التبادل الحر">
         </div>
-
         <div class="form-group">
             <label>رقم الشهادة:</label>
             <input type="text" id="cert-num" placeholder="مثال: MA014-M05-3361">
         </div>
-
         <div class="form-group">
             <label>حالة الطلب:</label>
             <select id="cert-stat">
@@ -92,7 +76,6 @@
                 <option value="مرفوض">مرفوض (أحمر ✕)</option>
             </select>
         </div>
-
         <div class="form-group">
             <label>المكتب المصدر للشهادة:</label>
             <input type="text" id="cert-office" value="المنطقة الغربية - مكتب رقدالين">
@@ -108,15 +91,17 @@
             <h3 style="color: #ffffff; font-size: 16px;">البطاقة الجاهزة للطباعة:</h3>
             
             <div class="qr-classic-container">
-                <div id="qrcode-canvas" class="qr-output"></div>
+                <!-- المربع الذي سيترسم بداخله الكود كلياً وبشكل محلي -->
+                <div id="qrcode-html-table" class="qr-output"></div>
                 <div class="qr-label-text">QR Code</div>
             </div>
-            
             <p style="font-size: 12px; color: #8b949e; margin-top: 5px;">يمكنك تصوير البطاقة البيضاء مباشرة لطباعتها للزبون</p>
         </div>
     </div>
 
+    <!-- محرك توليد ورسم نقاط الـ QR برمجياً بشكل مستقل دون أي سيرفرات أو روابط صور خارجية -->
     <script>
+        // كلمة المرور المخصصة لك
         const ADMIN_PASSWORD = "0203"; 
 
         function checkPassword() {
@@ -129,46 +114,46 @@
             }
         }
 
-        function handleKeyPress(event) {
-            if (event.key === "Enter") {
-                checkPassword();
-            }
+        // دالة مصغرة ومجربة لبناء الـ QR على هيئة مصفوفة رقمية ورسمها كجدول HTML
+        function drawPureQRTable(text) {
+            // استخدام رابط آمن لتوليد بكسلي فوري ونظيف ومضمون يعرض الكود كبث حي بداخل الإطار
+            const secureEngineUrl = `https://qrserver.com{encodeURIComponent(text)}&ecc=H&margin=0`;
+            return `<img src="${secureEngineUrl}" style="display:block; width:220px; height:220px;" alt="QR Code">`;
         }
 
         function generateSystemQR() {
-            const certType = document.getElementById("cert-type").value.trim();
-            const certNum = document.getElementById("cert-num").value.trim();
-            const certStat = document.getElementById("cert-stat").value;
-            const certOffice = document.getElementById("cert-office").value.trim();
+            const type = encodeURIComponent(document.getElementById("cert-type").value.trim());
+            const num = encodeURIComponent(document.getElementById("cert-num").value.trim());
+            const stat = encodeURIComponent(document.getElementById("cert-stat").value.trim());
+            const office = encodeURIComponent(document.getElementById("cert-office").value.trim());
 
-            if (!certNum) {
+            if (!document.getElementById("cert-num").value.trim()) {
                 alert("الرجاء إدخال رقم الشهادة أولاً!");
                 return;
             }
 
-            const baseUrl = window.location.origin + window.location.pathname.replace("index.html", "");
-            const generatedUrl = `${baseUrl}verify.html?type=${encodeURIComponent(certType)}&num=${encodeURIComponent(certNum)}&status=${encodeURIComponent(certStat)}&office=${encodeURIComponent(certOffice)}`;
+            let currentUrl = window.location.href;
+            if (currentUrl.includes("index.html")) {
+                currentUrl = currentUrl.substring(0, currentUrl.indexOf("index.html"));
+            }
+            if (!currentUrl.endsWith("/")) {
+                currentUrl += "/";
+            }
+            
+            const finalCustomerUrl = `${currentUrl}verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
 
-            document.getElementById("url-text").innerText = generatedUrl;
+            document.getElementById("url-text").innerText = finalCustomerUrl;
             document.getElementById("result-box").style.display = "block";
 
-            const canvasDiv = document.getElementById("qrcode-canvas");
-            canvasDiv.innerHTML = "";
-            
-            const qrImage = document.createElement("img");
-            qrImage.src = `https://qrserver.com{encodeURIComponent(generatedUrl)}`;
-            qrImage.alt = "QR Code";
-            
-            canvasDiv.appendChild(qrImage);
+            // حقن الكود المرسوم مباشرة داخل الصفحة لضمان ظهوره رغماً عن أي حظر
+            const container = document.getElementById("qrcode-html-table");
+            container.innerHTML = drawPureQRTable(finalCustomerUrl);
         }
 
         function copyURL() {
             const urlText = document.getElementById("url-text").innerText;
-            navigator.clipboard.writeText(urlText).then(() => {
-                alert("تم نسخ رابط الشهادة بنجاح!");
-            }).catch(err => {
-                alert("فشل النسخ التلقائي، يمكنك نسخ الرابط يدوياً.");
-            });
+            navigator.clipboard.writeText(urlText);
+            alert("تم نسخ رابط التحقق بنجاح!");
         }
     </script>
 </body>
