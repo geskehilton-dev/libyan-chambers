@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم - توليد شهادات QR</title>
+    <!-- استدعاء ملف المحرك المحلي الذي قمنا بإنشائه -->
+    <script src="qrcode.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #0d1117; color: #c9d1d9; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -16,13 +18,11 @@
         .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-primary { background-color: #238636; color: #ffffff; margin-top: 10px; }
         .btn-primary:hover { background-color: #2ea44f; }
-        
         .result-box { display: none; margin-top: 25px; border-top: 1px solid #30363d; padding-top: 20px; text-align: center; }
         .url-box { background: #21262d; border: 1px solid #30363d; padding: 12px; border-radius: 8px; font-size: 13px; color: #58a6ff; word-break: break-all; margin-bottom: 15px; text-align: left; direction: ltr; }
         .btn-secondary { background-color: #21262d; border: 1px solid #30363d; color: #c9d1d9; font-size: 14px; padding: 8px; width: 100%; margin-bottom: 20px; }
         .btn-secondary:hover { background-color: #30363d; }
         
-        /* تصميم الحاوية البيضاء المطابق تماماً للصورة */
         .qr-classic-container { 
             background-color: #ffffff; 
             border: 2px solid #7a828e; 
@@ -33,16 +33,14 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
         }
         .qr-output { display: flex; justify-content: center; align-items: center; background: #ffffff; margin: 0 auto; width: 220px; height: 220px; }
-        .qr-output canvas { width: 220px !important; height: 220px !important; display: block; }
+        .qr-output canvas, .qr-output img { width: 220px !important; height: 220px !important; display: block; }
         .qr-label-text { color: #000000; font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; margin-top: 15px; letter-spacing: 0.5px; text-align: center; }
-        
         #login-section { display: block; }
         #panel-section { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- قسم الحماية بكلمة مرور -->
     <div class="admin-card" id="login-section">
         <h1>تسجيل الدخول للنظام</h1>
         <div class="form-group">
@@ -52,7 +50,6 @@
         <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
     </div>
 
-    <!-- لوحة التحكم وإدخال البيانات -->
     <div class="admin-card" id="panel-section">
         <h1>منظومة إصدار شهادات منشأ QR</h1>
         
@@ -87,19 +84,14 @@
             <h3 style="color: #ffffff; font-size: 16px;">البطاقة الجاهزة للطباعة:</h3>
             
             <div class="qr-classic-container">
-                <div class="qr-output">
-                    <!-- لوحة الرسم البرمجية الصافية المستقلة -->
-                    <canvas id="canvas-qr-final"></canvas>
-                </div>
+                <div class="qr-output" id="qrcode-target"></div>
                 <div class="qr-label-text">QR Code</div>
             </div>
             <p style="font-size: 12px; color: #8b949e; margin-top: 5px;">يمكنك تصوير البطاقة البيضاء مباشرة لطباعتها للزبون</p>
         </div>
     </div>
 
-    <!-- محرك التوليد الرياضي المستقل والمكتمل 100% المدمج بداخل الصفحة ليعمل رغماً عن أي قيود -->
     <script>
-        // كلمة المرور المعدلة 0203
         const ADMIN_PASSWORD = "0203"; 
 
         function checkPassword() {
@@ -112,50 +104,12 @@
             }
         }
 
-        // خوارزمية هندسية كاملة وصحيحة لبناء مصفوفة الـ QR التقليدية بداخل صفحتك
-        function drawPureCanvasQR(text) {
-            const canvas = document.getElementById("canvas-qr-final");
-            const ctx = canvas.getContext("2d");
-            const size = 220;
-            canvas.width = size;
-            canvas.height = size;
-            
-            // خلفية بيضاء
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, size, size);
-            
-            // تحويل النص إلى بصمة توزيع أرقام ثابتة لتوليد نمط صحيح لروابط الجيت هاب
-            let hash = 0;
-            for (let i = 0; i < text.length; i++) {
-                hash = (hash << 5) - hash + text.charCodeAt(i);
-                hash |= 0;
-            }
-            
-            const matrixSize = 25; 
-            const boxSize = size / matrixSize;
-            
-            for (let r = 0; r < matrixSize; r++) {
-                for (let c = 0; c < matrixSize; c++) {
-                    // توزيع النقاط بناء على معادلة جيبية رياضية تحاكي تشفير الروابط
-                    let isDark = Math.abs(Math.sin(hash + r * matrixSize + c)) > 0.46;
-                    
-                    // رسم زوايا الـ QR الكبيرة الثلاث الأساسية (المطابقة لصورتك) بدقة تامة
-                    if ((r < 7 && c < 7) || (r > matrixSize - 8 && c < 7) || (r < 7 && c > matrixSize - 8)) {
-                        isDark = (r === 0 || r === 6 || c === 0 || c === 6 || (r >= 2 && r <= 4 && c >= 2 && c <= 4) || (r >= 2 && r <= 4 && c > matrixSize - 6 && c < matrixSize - 2) || (r > matrixSize - 6 && r < matrixSize - 2 && c >= 2 && c <= 4));
-                    }
-                    
-                    // رسم مربع ميزان المحاذاة الصغير بالزاوية اليمنى السفلى
-                    if (r >= matrixSize - 7 && r <= matrixSize - 5 && c >= matrixSize - 7 && c <= matrixSize - 5) {
-                        isDark = (r === matrixSize - 7 || r === matrixSize - 5 || c === matrixSize - 7 || c === matrixSize - 5 || (r === matrixSize - 6 && c === matrixSize - 6));
-                    }
-                    
-                    ctx.fillStyle = isDark ? "#1a1f26" : "#ffffff";
-                    ctx.fillRect(c * boxSize, r * boxSize, boxSize, boxSize);
-                }
-            }
-        }
-
         function generateSystemQR() {
+            if (typeof QRCode === "undefined") {
+                alert("جاري تحميل محرك الـ QR الداخلي، يرجى المحاولة بعد 3 ثوانٍ فقط.");
+                return;
+            }
+
             const type = encodeURIComponent(document.getElementById("cert-type").value.trim());
             const num = encodeURIComponent(document.getElementById("cert-num").value.trim());
             const stat = encodeURIComponent(document.getElementById("cert-stat").value.trim());
@@ -170,17 +124,24 @@
             if (currentUrl.includes("index.html")) {
                 currentUrl = currentUrl.substring(0, currentUrl.indexOf("index.html"));
             }
-            if (!currentUrl.endsWith("/")) {
-                currentUrl += "/";
-            }
+            if (!currentUrl.endsWith("/")) currentUrl += "/";
             
             const finalCustomerUrl = `${currentUrl}verify.html?type=${type}&num=${num}&stat=${stat}&office=${office}`;
 
             document.getElementById("url-text").innerText = finalCustomerUrl;
             document.getElementById("result-box").style.display = "block";
 
-            // استدعاء محرك الرسم الهندسي الداخلي الفوري والمحمي من الحظر
-            drawPureCanvasQR(finalCustomerUrl);
+            const target = document.getElementById("qrcode-target");
+            target.innerHTML = "";
+            
+            new QRCode(target, {
+                text: finalCustomerUrl,
+                width: 220,
+                height: 220,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
         }
 
         function copyURL() {
